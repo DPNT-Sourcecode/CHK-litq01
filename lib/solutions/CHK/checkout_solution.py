@@ -1,3 +1,4 @@
+from collections import Counter
 
 
 # noinspection PyUnusedLocal
@@ -13,5 +14,8 @@ def checkout(skus):
     if not isinstance(skus, str):
         raise ValueError("parameter must be a string")
 
-    
+    items = Counter(skus)
+
+
+
 
