@@ -10,6 +10,3 @@ def hello(friend_name):
     else:
         msg = "Hello, World!"
     return msg
-
-
-
