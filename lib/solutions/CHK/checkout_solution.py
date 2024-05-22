@@ -16,6 +16,11 @@ def checkout(skus):
 
     items = Counter(skus)
 
+    total = 0
+
+
+
+
 
 
 
