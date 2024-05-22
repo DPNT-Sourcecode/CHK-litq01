@@ -16,7 +16,8 @@ def checkout(skus):
     if isinstance(skus, str) and len(skus) > 0:
         items = Counter(skus)
 
-        for item, qty in items:
+        for item, qty in items.items():
             total += price_table[item] * qty
 
     return total
+
