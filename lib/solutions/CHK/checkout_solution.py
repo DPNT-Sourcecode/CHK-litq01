@@ -18,7 +18,10 @@ def checkout(skus):
 
     total = 0
 
+    for item, qty in items:
+        total += price_table[item] * qty
 
+    return total
 
 
 
