@@ -20,8 +20,10 @@ def checkout(skus):
             try:
                 total += price_table[item] * qty
             except KeyError as e:
-                continue
+                total = -1
+                break
 
     return total
+
 
 
