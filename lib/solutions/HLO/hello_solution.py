@@ -3,4 +3,6 @@
 # noinspection PyUnusedLocal
 # friend_name = unicode string
 def hello(friend_name):
-    raise NotImplementedError()
+    # validate parameter is a string
+    if
+
