@@ -17,7 +17,11 @@ def checkout(skus):
         items = Counter(skus)
 
         for item, qty in items.items():
-            total += price_table[item] * qty
+            try:
+                total += price_table[item] * qty
+            except KeyError as e:
+                continue
 
     return total
+
 
