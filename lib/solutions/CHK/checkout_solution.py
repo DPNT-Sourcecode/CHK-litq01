@@ -3,7 +3,7 @@ from collections import Counter, OrderedDict
 
 def offer_details(offer_description):
     details = [word.strip() for word in offer_description.split('for')]
-    return int(details[0][0]), int(details[1])
+    return extract_leading_number(details[0]), int(details[1])
 
 
 def process_get_one_free_offers(items, one_free_offers):
@@ -14,7 +14,7 @@ def process_get_one_free_offers(items, one_free_offers):
             # check if item meets quantity threshold
             offer_description = one_free_offers[item]
             offer_description_details = [word.strip() for word in offer_description.replace('free', '').split('get one')]
-            offer_qty = int(offer_description_details[0][0])
+            offer_qty = extract_leading_number(offer_description_details[0])
             free_item = offer_description_details[1]
 
             # handle operation where get one free offer pertains to same item/product
@@ -61,6 +61,22 @@ def parse_compound_offer(offer_string):
     arranged_parsed_offers = OrderedDict(sorted(parsed_offers.items(), key=lambda item: item[0], reverse=True))
 
     return arranged_parsed_offers
+
+
+def extract_leading_number(s):
+    number_str = ''
+
+    for char in s:
+        if char.isdigit():
+            number_str += char
+        else:
+            break
+
+    # convert extracted number string to int
+    if number_str:
+        return int(number_str)
+    else:
+        return None
 
 
 # noinspection PyUnusedLocal
@@ -186,3 +202,4 @@ def checkout(skus):
                 break
 
     return total
+
