@@ -17,7 +17,7 @@ def process_get_one_free_offers(items, one_free_offers):
             offer_qty = int(offer_description_details[0][0])
             free_item = offer_description_details[1]
 
-            # handle operation where get one free pertains to same item/product
+            # handle operation where get one free offer pertains to same item/product
             if free_item == item:
                 item_set = offer_qty + 1
                 items_to_pay_for = (qty // item_set) * offer_qty + (qty % item_set)
@@ -143,4 +143,5 @@ def checkout(skus):
                 break
 
     return total
+
 
