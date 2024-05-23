@@ -64,7 +64,8 @@ def checkout(skus):
         'B': 30,
         'C': 20,
         'D': 15,
-        'E': 40
+        'E': 40,
+        'F': 10
     }
 
     offers = {
@@ -72,11 +73,13 @@ def checkout(skus):
         'B': '2B for 45',
         'C': '',
         'D': '',
-        'E': ''
+        'E': '',
+        'F': ''
     }
 
     get_one_free_offers = {
-        'E': '2E get one B free'
+        'E': '2E get one B free',
+        'F': '2F get one F free'
     }
 
     total = 0
@@ -133,3 +136,4 @@ def checkout(skus):
                 break
 
     return total
+
