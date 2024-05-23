@@ -51,7 +51,9 @@ def parse_compound_offer(offer_string):
         parsed_offers[str(item_offer_qty)] = item_offer_price
 
     # arrange the offers in descending order of qty
-    arranged_parsed_offers = OrderedDict(sorted())
+    arranged_parsed_offers = OrderedDict(sorted(parsed_offers.items(), key=lambda item: item[0], reverse=True))
+
+    return arranged_parsed_offers
 
 
 # noinspection PyUnusedLocal
@@ -96,6 +98,19 @@ def checkout(skus):
                     # and calculate prices accordingly.
                     if ',' in item_special_offers:
                         compound_offer_details = parse_compound_offer(item_special_offers)
+                        item_total = 0
+
+                        # calculate items that fall under special offers
+                        for offer_qty, offer_price in compound_offer_details.items():
+                            if qty >= int(offer_qty):
+                                item_total += (qty // int(offer_qty)) * offer_price
+                                qty = qty % int(offer_qty)
+
+                        # calculate items not covered by special offers
+                        item_total += price_table[item] * qty
+
+                        total += item_total
+                        continue
 
                     # calc pricing of item based off simple special offer
                     item_offer_qty, item_offer_price = offer_details(item_special_offers)
@@ -118,4 +133,5 @@ def checkout(skus):
                 break
 
     return total
+
 
