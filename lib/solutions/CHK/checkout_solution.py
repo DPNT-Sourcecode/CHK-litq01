@@ -1,9 +1,57 @@
-from collections import Counter
+from collections import Counter, OrderedDict
 
 
 def offer_details(offer_description):
     details = [word.strip() for word in offer_description.split('for')]
     return int(details[0][0]), int(details[1])
+
+
+def process_get_one_free_offers(items, one_free_offers):
+    items_to_deduct = {}
+
+    for item, qty in items.items():
+        if item in one_free_offers:
+            # check if item meets quantity threshold
+            offer_description = one_free_offers[item]
+            offer_description_details = [word.strip() for word in offer_description.replace('free', '').split('get one')]
+            offer_qty = int(offer_description_details[0][0])
+            free_item = offer_description_details[1]
+
+            if qty >= offer_qty:
+                free_item_qty = qty // offer_qty
+            else:
+                free_item_qty = 0
+
+            items_to_deduct[free_item] = free_item_qty
+
+    # check if item to deduct is already in the checkout basket, if not remove
+    free_items_not_in_basket = [free_item for free_item in items_to_deduct.keys() if free_item not in items]
+
+    for item in free_items_not_in_basket:
+        items_to_deduct.pop(item)
+
+    # remove quantity of free items from items to calc
+    for free_item, free_item_qty in items_to_deduct.items():
+        if items[free_item] <= free_item_qty:
+            items[free_item] = 0
+        else:
+            items[free_item] = items[free_item] - free_item_qty
+
+    return items
+
+
+def parse_compound_offer(offer_string):
+    # separate offers
+    offers = offer_string.split(',')
+
+    # parse offers
+    parsed_offers = OrderedDict()
+    for offer in offers:
+        item_offer_qty, item_offer_price = offer_details(offer)
+        parsed_offers[str(item_offer_qty)] = item_offer_price
+
+    # arrange the offers in descending order of qty
+    arranged_parsed_offers = OrderedDict(sorted())
 
 
 # noinspection PyUnusedLocal
@@ -13,20 +61,29 @@ def checkout(skus):
         'A': 50,
         'B': 30,
         'C': 20,
-        'D': 15
+        'D': 15,
+        'E': 40
     }
 
     offers = {
-        'A': '3A for 130',
+        'A': '3A for 130, 5A for 200',
         'B': '2B for 45',
         'C': '',
-        'D': ''
+        'D': '',
+        'E': ''
+    }
+
+    get_one_free_offers = {
+        'E': '2E get one B free'
     }
 
     total = 0
 
     if isinstance(skus, str) and len(skus) > 0:
         items = Counter(skus)
+
+        # process get one free offers
+        items = process_get_one_free_offers(items, get_one_free_offers)
 
         for item, qty in items.items():
             try:
@@ -35,7 +92,12 @@ def checkout(skus):
                     # if no special offer on item, calc price in relation to qty
                     total += price_table[item] * qty
                 else:
-                    # calc pricing of item based off special offer
+                    # check if offer is a compound special offer by checking for a "," in offer description,
+                    # and calculate prices accordingly.
+                    if ',' in item_special_offers:
+                        compound_offer_details = parse_compound_offer(item_special_offers)
+
+                    # calc pricing of item based off simple special offer
                     item_offer_qty, item_offer_price = offer_details(item_special_offers)
 
                     if qty >= item_offer_qty:
@@ -56,3 +118,4 @@ def checkout(skus):
                 break
 
     return total
+
