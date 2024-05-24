@@ -58,7 +58,7 @@ def parse_compound_offer(offer_string):
         parsed_offers[str(item_offer_qty)] = item_offer_price
 
     # arrange the offers in descending order of qty
-    arranged_parsed_offers = OrderedDict(sorted(parsed_offers.items(), key=lambda item: item[0], reverse=True))
+    arranged_parsed_offers = OrderedDict(sorted(parsed_offers.items(), key=lambda item: int(item[0]), reverse=True))
 
     return arranged_parsed_offers
 
@@ -202,3 +202,4 @@ def checkout(skus):
                 break
 
     return total
+
