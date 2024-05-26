@@ -79,6 +79,26 @@ def extract_leading_number(s):
         return None
 
 
+def process_group_discount(grp_disc_products, grp_disc_price, discount_threshold, basket_items, price_table):
+    # separate the group discount products into their own basket.
+    grp_discount_basket_items = OrderedDict((k, basket_items.pop(k)) for k in grp_disc_products if k in basket_items)
+
+    # Calculate product item prices in group discount basket
+    # First calculate the total quantity of promotional items
+    promo_items_qty = sum(grp_discount_basket_items.get(item, 0) for item in grp_disc_products)
+
+    # Calculate the promotional discount to be given
+    promo_discount = 0
+    if promo_items_qty >= discount_threshold:
+        promo_groups = promo_items_qty // discount_threshold
+        promo_discount = promo_groups * grp_disc_price
+
+    # quantity of promo items that are outside the discount quantity threshold
+    non_discount_promo_items_qty = promo_items_qty % discount_threshold
+
+    # Arrange grp
+
+
 # noinspection PyUnusedLocal
 # skus = unicode string
 def checkout(skus):
@@ -93,7 +113,7 @@ def checkout(skus):
         'H': 10,
         'I': 35,
         'J': 60,
-        'K': 80,
+        'K': 70,
         'L': 90,
         'M': 15,
         'N': 40,
@@ -101,14 +121,14 @@ def checkout(skus):
         'P': 50,
         'Q': 30,
         'R': 50,
-        'S': 30,
+        'S': 20,
         'T': 20,
         'U': 40,
         'V': 50,
         'W': 20,
-        'X': 90,
-        'Y': 10,
-        'Z': 50
+        'X': 17,
+        'Y': 20,
+        'Z': 21
     }
 
     offers = {
@@ -122,7 +142,7 @@ def checkout(skus):
         'H': '5H for 45, 10H for 80',
         'I': '',
         'J': '',
-        'K': '2K for 150',
+        'K': '2K for 120',
         'L': '',
         'M': '',
         'N': '',
@@ -148,6 +168,10 @@ def checkout(skus):
         'U': '3U get one U free',
     }
 
+    group_discount_products = ['S', 'T', 'X', 'Y', 'Z']
+    group_discount_price = 45
+    group_discount_threshold = 3
+
     total = 0
 
     if isinstance(skus, str) and len(skus) > 0:
@@ -155,6 +179,14 @@ def checkout(skus):
 
         # process get one free offers
         items = process_get_one_free_offers(items, get_one_free_offers)
+
+        # process group discount items
+        items, grp_discount_total = process_group_discount(group_discount_products,
+                                                           group_discount_price,
+                                                           group_discount_threshold,
+                                                           items,
+                                                           price_table)
+        total += grp_discount_total
 
         for item, qty in items.items():
             try:
@@ -202,3 +234,4 @@ def checkout(skus):
                 break
 
     return total
+
