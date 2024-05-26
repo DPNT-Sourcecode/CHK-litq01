@@ -108,7 +108,7 @@ def process_group_discount(grp_disc_products, grp_disc_price, discount_threshold
             non_discount_items_price += non_discount_promo_items_qty * item[2]
             break
         else:
-            non_discount_items_price += non_discount_promo_items_qty * item[2]
+            non_discount_items_price += item[1] * item[2]
             non_discount_promo_items_qty = non_discount_promo_items_qty - item[1]
 
     total_price_for_group_discount_items = promo_discount + non_discount_items_price
@@ -251,3 +251,4 @@ def checkout(skus):
                 break
 
     return total
+
