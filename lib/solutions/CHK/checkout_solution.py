@@ -96,7 +96,24 @@ def process_group_discount(grp_disc_products, grp_disc_price, discount_threshold
     # quantity of promo items that are outside the discount quantity threshold
     non_discount_promo_items_qty = promo_items_qty % discount_threshold
 
-    # Arrange grp
+    # Arrange grp_discount_basket_items according to their prices in ascending order
+    # then, calculate the amount to pay on items that don't meet the discount threshold,
+    # prioritising the cheapest products. That is [(item, qty, price)]. E.g. [('X',2,17),('S',2,20),...]
+    grp_discount_basket_items_list = [(item, qty, price_table[item]) for item, qty in grp_discount_basket_items.items()]
+    sorted_grp_discount_basket_items_list = sorted(grp_discount_basket_items_list, key=lambda item: item[2])
+
+    non_discount_items_price = 0
+    for item in sorted_grp_discount_basket_items_list:
+        if non_discount_promo_items_qty <= item[1]:
+            non_discount_items_price += non_discount_promo_items_qty * item[2]
+            break
+        else:
+            non_discount_items_price += non_discount_promo_items_qty * item[2]
+            non_discount_promo_items_qty = non_discount_promo_items_qty - item[1]
+
+    total_price_for_group_discount_items = promo_discount + non_discount_items_price
+
+    return basket_items, total_price_for_group_discount_items
 
 
 # noinspection PyUnusedLocal
@@ -234,3 +251,4 @@ def checkout(skus):
                 break
 
     return total
+
